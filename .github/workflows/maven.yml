@@ -1,11 +1,11 @@
 name: CI 
- 
+
 on: 
   push: 
     branches: [ main ] 
   pull_request: 
     branches: [ main ] 
- 
+
 jobs: 
   build-and-test: 
     runs-on: ubuntu-latest 
@@ -18,11 +18,11 @@ jobs:
         ports: 
           - 3307:3306 
         options: >- 
-          --health-cmd='mysqladmin ping -h localhost'  
-          --health-interval=10s  
-          --health-timeout=5s  
-          --health-retries=3 
- 
+          --health-cmd="mysqladmin ping -h localhost" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
     steps: 
       - uses: actions/checkout@v4 
       - name: Set up Java 
@@ -30,10 +30,13 @@ jobs:
         with: 
           distribution: temurin 
           java-version: 17 
+      
       - name: Wait for MySQL to be ready 
         run: | 
-          for i in {1..30}; do mysql -uroot -proot -h127.0.0.1 -P3307 -e "select 1" && break || sleep 2; 
+          for i in {1..30}; do 
+            mysql -uroot -proot -h127.0.0.1 -P3307 -e "select 1" && break || sleep 2; 
           done 
+      
       - name: Build and run tests 
         env: 
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3307/todoappdb 
